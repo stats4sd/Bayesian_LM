@@ -250,7 +250,10 @@ server <- function(input, output) {
     ggplot(d1,aes(x=Slope))+
       geom_histogram()+
       geom_vline(xintercept=mean(d1$Slope),col="red")+
-      geom_vline(xintercept=coef(m1)[2],col="blue")
+      geom_vline(xintercept=coef(m1)[2],col="blue")+
+      annotate(x=mean(d1$Slope),y=as.numeric(input$iters)/20,geom="label",label="Bayesian\nEstimate",col="red")+
+      annotate(x=coef(m1)[2],y=0,geom="label",label="Frequentist\nEstimate",col="blue")+
+      ggtitle("Slope: Posterior Distribution")
     })
 
     output$InterceptPost<-renderPlot({
@@ -259,7 +262,10 @@ server <- function(input, output) {
       ggplot(d1,aes(x=Intercept))+
         geom_histogram()+
         geom_vline(xintercept=mean(d1$Intercept),col="red")+
-        geom_vline(xintercept=coef(m1)[1],col="blue")
+        geom_vline(xintercept=coef(m1)[1],col="blue")+
+        annotate(x=mean(d1$Intercept),y=as.numeric(input$iters)/20,geom="label",label="Bayesian\nEstimate",col="red")+
+        annotate(x=coef(m1)[1],y=0,geom="label",label="Frequentist\nEstimate",col="blue")+
+        ggtitle("Intercept: Posterior Distribution")
     })
 
 
@@ -269,7 +275,12 @@ server <- function(input, output) {
     ggplot(d1,aes(x=SD))+
       geom_histogram()+
       geom_vline(xintercept=mean(d1$SD),col="red")+
-      geom_vline(xintercept=summary(m1)$sigma,col="blue")
+      geom_vline(xintercept=summary(m1)$sigma,col="blue")+
+      annotate(x=mean(d1$SD),y=as.numeric(input$iters)/20,geom="label",label="Bayesian\nEstimate",col="red")+
+      annotate(x=summary(m1)$sigma,y=0,geom="label",label="Frequentist\nEstimate",col="blue")+
+      ggtitle("SD: Posterior Distribution")
+
+
     })
 
     output$ModelPost<-renderPlot({
