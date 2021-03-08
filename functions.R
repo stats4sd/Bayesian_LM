@@ -26,7 +26,10 @@ prior <- function(param,prior1,prior2,prior3){
   return(aprior+bprior+sdprior)
 }
 
-
+estimate_mode <- function(x) {
+  d <- density(x)
+  d$x[which.max(d$y)]
+}
 
 
 likelihood <- function(param,x,y){

@@ -276,7 +276,7 @@ p1
 data.frame("Parameter"=c("Intercept","Slope","SD"),
            "Frequentist Estimate"=c(coef(m1),summary(m1)$sigma),
            "95% Confidence Interval"=c(paste(round(confint(m1),2)[1,],collapse=","),paste(round(confint(m1),2)[2,],collapse=","),NA),
-           "Bayesian Estimate"=c(round(median(d1$Intercept),2),round(median(d1$Slope),2),round(median(d1$SD),2)),
+           "Bayesian Estimate"=c(round(estimate_mode(d1$Intercept),2),round(estimate_mode(d1$Slope),2),round(estimate_mode(d1$SD),2)),
            "95% Credible Interval"=c(paste(round(quantile(d1$Intercept,c(0.025,0.975)),2),collapse=", "),
                                        paste(round(quantile(d1$Slope,c(0.025,0.975)),2),collapse=", "),
                                        paste(round(quantile(d1$SD,c(0.025,0.975)),2),collapse=", ")),check.names = FALSE)
@@ -296,7 +296,7 @@ data.frame("Parameter"=c("Intercept","Slope","SD"),
       geom_histogram()+
       geom_vline(xintercept=median(d1$Slope),col="red")+
       geom_vline(xintercept=coef(m1)[2],col="blue")+
-      annotate(x=median(d1$Slope),y=as.numeric(input$iters)/20,geom="label",label="Bayesian\nEstimate",col="red")+
+      annotate(x=estimate_mode(d1$Slope),y=as.numeric(input$iters)/20,geom="label",label="Bayesian\nEstimate",col="red")+
       annotate(x=coef(m1)[2],y=0,geom="label",label="Frequentist\nEstimate",col="blue")+
       ggtitle("Slope: Posterior Distribution",subtitle=priortext1)  ->p1
   print(p1)
@@ -316,9 +316,9 @@ data.frame("Parameter"=c("Intercept","Slope","SD"),
 
       ggplot(d1,aes(x=Intercept))+
         geom_histogram()+
-        geom_vline(xintercept=median(d1$Intercept),col="red")+
+        geom_vline(xintercept=estimate_mode(d1$Intercept),col="red")+
         geom_vline(xintercept=coef(m1)[1],col="blue")+
-        annotate(x=median(d1$Intercept),y=as.numeric(input$iters)/20,geom="label",label="Bayesian\nEstimate",col="red")+
+        annotate(x=estimate_mode(d1$Intercept),y=as.numeric(input$iters)/20,geom="label",label="Bayesian\nEstimate",col="red")+
         annotate(x=coef(m1)[1],y=0,geom="label",label="Frequentist\nEstimate",col="blue")+
         ggtitle("Intercept: Posterior Distribution",subtitle=priortext2)  ->p1
       print(p1)
@@ -336,9 +336,9 @@ data.frame("Parameter"=c("Intercept","Slope","SD"),
         filter(iter>as.numeric(input$burn))->d1
     ggplot(d1,aes(x=SD))+
       geom_histogram()+
-      geom_vline(xintercept=median(d1$SD),col="red")+
+      geom_vline(xintercept=estimate_mode(d1$SD),col="red")+
       geom_vline(xintercept=summary(m1)$sigma,col="blue")+
-      annotate(x=median(d1$SD),y=as.numeric(input$iters)/20,geom="label",label="Bayesian\nEstimate",col="red")+
+      annotate(x=estimate_mode(d1$SD),y=as.numeric(input$iters)/20,geom="label",label="Bayesian\nEstimate",col="red")+
       annotate(x=summary(m1)$sigma,y=0,geom="label",label="Frequentist\nEstimate",col="blue")+
       ggtitle("SD: Posterior Distribution",subtitle=priortext3)  ->p1
     print(p1)
@@ -361,12 +361,12 @@ data.frame("Parameter"=c("Intercept","Slope","SD"),
     ggplot(data1,aes(y=Weight_kg,x=Height_centered))+
       geom_point()+
       geom_smooth(method="lm",se=FALSE)+
-      geom_abline(slope = mean(d1$Slope)
-                  ,intercept=mean(d1$Intercept),col="red")+
+      geom_abline(slope = estimate_mode(d1$Slope)
+                  ,intercept=estimate_mode(d1$Intercept),col="red")+
       xlab("Height (cm) (Centered)")+
       ylab("Weight (kg)")+
       annotate(geom="label",x=-5,y=90,label=paste0("Frequentist: Weight=",round(coef(m1)[1],2),"+",round(coef(m1)[2],2),"*Height"),col="blue")+
-      annotate(geom="label",x=-5,y=85,label=paste0("Bayesian: Weight=",round(median(d1$Intercept),2),"+",round(median(d1$Slope),2),"*Height"),col="red")+
+      annotate(geom="label",x=-5,y=85,label=paste0("Bayesian: Weight=",round(estimate_mode(d1$Intercept),2),"+",round(estimate_mode(d1$Slope),2),"*Height"),col="red")+
       ggtitle("Weight vs Height for 2020-21 Aston Villa Squad",
               subtitle=paste0(priortext1,"\n",priortext2,"\n",priortext3)) ->p1
     print(p1)
