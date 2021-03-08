@@ -277,7 +277,7 @@ data.frame("Parameter"=c("Intercept","Slope","SD"),
            "Frequentist Estimate"=c(coef(m1),summary(m1)$sigma),
            "95% Confidence Interval"=c(paste(round(confint(m1),2)[1,],collapse=","),paste(round(confint(m1),2)[2,],collapse=","),NA),
            "Bayesian Estimate"=c(round(median(d1$Intercept),2),round(median(d1$Slope),2),round(median(d1$SD),2)),
-           "95% Prediction Interval"=c(paste(round(quantile(d1$Intercept,c(0.025,0.975)),2),collapse=", "),
+           "95% Credible Interval"=c(paste(round(quantile(d1$Intercept,c(0.025,0.975)),2),collapse=", "),
                                        paste(round(quantile(d1$Slope,c(0.025,0.975)),2),collapse=", "),
                                        paste(round(quantile(d1$SD,c(0.025,0.975)),2),collapse=", ")),check.names = FALSE)
 }
