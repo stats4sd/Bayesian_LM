@@ -296,7 +296,7 @@ data.frame("Parameter"=c("Intercept","Slope","SD"),
         filter(iter>as.numeric(input$burn)) ->d1
   ggplot(d1,aes(x=Slope))+
       geom_histogram()+
-      geom_vline(xintercept=median(d1$Slope),col="red")+
+      geom_vline(xintercept=estimate_mode(d1$Slope),col="red")+
       geom_vline(xintercept=coef(m1)[2],col="blue")+
       annotate(x=estimate_mode(d1$Slope),y=as.numeric(input$iters)/20,geom="label",label="Bayesian\nEstimate",col="red")+
       annotate(x=coef(m1)[2],y=0,geom="label",label="Frequentist\nEstimate",col="blue")+
