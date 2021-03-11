@@ -71,7 +71,9 @@ ui <- fluidPage(
     tabPanel("Iterate",numericInput("iters","Number of Iterations",value=10000),
              actionButton("Run","Run"),plotOutput("burnplot"),numericInput("burn","Set Burn In Range",value=500)),
     tabPanel("Posteriors",plotOutput("ModelPost"),tableOutput("stattable"),
-             plotOutput("SlopePost"),plotOutput("InterceptPost"),plotOutput("SDPost"))
+             plotOutput("SlopePost"),checkboxInput("prior1","Show Prior?",value = FALSE),
+             plotOutput("InterceptPost"),checkboxInput("prior2","Show Prior?",value = FALSE),
+             plotOutput("SDPost"),checkboxInput("prior3","Show Prior?",value = FALSE))
 
       )
     )
@@ -299,6 +301,29 @@ data.frame("Parameter"=c("Intercept","Slope","SD"),
       annotate(x=estimate_mode(d1$Slope),y=as.numeric(input$iters)/20,geom="label",label="Bayesian\nEstimate",col="red")+
       annotate(x=coef(m1)[2],y=0,geom="label",label="Frequentist\nEstimate",col="blue")+
       ggtitle("Slope: Posterior Distribution",subtitle=priortext1)  ->p1
+
+  if(input$prior1=="TRUE"){
+    if(input$slopeprior=="normal"){
+
+      pp1<-data.frame(x=seq( ggplot_build(p1)$layout$panel_scales_x[[1]]$range$range[1],
+                             ggplot_build(p1)$layout$panel_scales_x[[1]]$range$range[2],length.out = 300))
+      pp1$y<-dnorm(x=pp1$x,mean = as.numeric(input$slope_mean),sd=as.numeric(input$slope_sd))
+
+    }
+    if(input$slopeprior=="uniform"){
+
+      pp1<-data.frame(x=seq( ggplot_build(p1)$layout$panel_scales_x[[1]]$range$range[1],
+                             ggplot_build(p1)$layout$panel_scales_x[[1]]$range$range[2],length.out = 300))
+      pp1$y<-dunif(x=pp1$x,min = as.numeric(input$slope_min),max=as.numeric(input$slope_max))
+
+
+    }
+    pp1$y2<-pp1$y*max(ggplot_build(p1)$data[[1]]$y)/max(pp1$y)
+    p1<-p1+
+      geom_line(aes(x=x,y=y2),data=pp1,inherit.aes=FALSE,colour="forestgreen")
+  }
+
+
   print(p1)
 
 }
@@ -321,6 +346,29 @@ data.frame("Parameter"=c("Intercept","Slope","SD"),
         annotate(x=estimate_mode(d1$Intercept),y=as.numeric(input$iters)/20,geom="label",label="Bayesian\nEstimate",col="red")+
         annotate(x=coef(m1)[1],y=0,geom="label",label="Frequentist\nEstimate",col="blue")+
         ggtitle("Intercept: Posterior Distribution",subtitle=priortext2)  ->p1
+
+      if(input$prior2=="TRUE"){
+        if(input$intprior=="normal"){
+
+          pp1<-data.frame(x=seq( ggplot_build(p1)$layout$panel_scales_x[[1]]$range$range[1],
+                                 ggplot_build(p1)$layout$panel_scales_x[[1]]$range$range[2],length.out = 300))
+          pp1$y<-dnorm(x=pp1$x,mean = as.numeric(input$int_mean),sd=as.numeric(input$int_sd))
+
+        }
+        if(input$intprior=="uniform"){
+
+          pp1<-data.frame(x=seq( ggplot_build(p1)$layout$panel_scales_x[[1]]$range$range[1],
+                                   ggplot_build(p1)$layout$panel_scales_x[[1]]$range$range[2],length.out = 300))
+          pp1$y<-dunif(x=pp1$x,min = as.numeric(input$int_min),max=as.numeric(input$int_max))
+
+
+        }
+        pp1$y2<-pp1$y*max(ggplot_build(p1)$data[[1]]$y)/max(pp1$y)
+        p1<-p1+
+          geom_line(aes(x=x,y=y2),data=pp1,inherit.aes=FALSE,colour="forestgreen")
+      }
+
+
       print(p1)
       }
     })
@@ -340,7 +388,32 @@ data.frame("Parameter"=c("Intercept","Slope","SD"),
       geom_vline(xintercept=summary(m1)$sigma,col="blue")+
       annotate(x=estimate_mode(d1$SD),y=as.numeric(input$iters)/20,geom="label",label="Bayesian\nEstimate",col="red")+
       annotate(x=summary(m1)$sigma,y=0,geom="label",label="Frequentist\nEstimate",col="blue")+
-      ggtitle("SD: Posterior Distribution",subtitle=priortext3)  ->p1
+      ggtitle("SD: Posterior Distribution",subtitle=priortext3) ->p1
+
+    if(input$prior3=="TRUE"){
+    if(input$sdprior=="normal"){
+
+      pp1<-data.frame(x=seq(ggplot_build(p1)$layout$panel_scales_x[[1]]$range$range[1],
+                                   ggplot_build(p1)$layout$panel_scales_x[[1]]$range$range[2],length.out = 300))
+      pp1$y<-dnorm(x=pp1$x,mean = as.numeric(input$sd_mean),sd=as.numeric(input$sd_sd))
+
+    }
+    if(input$sdprior=="uniform"){
+
+      pp1<-data.frame(x=seq( ggplot_build(p1)$layout$panel_scales_x[[1]]$range$range[1],
+                             ggplot_build(p1)$layout$panel_scales_x[[1]]$range$range[2],length.out = 300))
+      pp1$y<-dunif(x=pp1$x,min = as.numeric(input$sd_min),max=as.numeric(input$sd_max))
+
+
+    }
+    pp1$y2<-pp1$y*max(ggplot_build(p1)$data[[1]]$y)/max(pp1$y)
+    p1<-p1+
+      geom_line(aes(x=x,y=y2),data=pp1,inherit.aes=FALSE,colour="forestgreen")
+}
+
+
+
+
     print(p1)
 }
 
